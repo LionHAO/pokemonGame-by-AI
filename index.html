@@ -11,6 +11,9 @@
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background-color: #202020;
+        margin: 0;
+        height: 100vh;
+        overflow: hidden;
       }
 
       /* Custom animations */
@@ -59,14 +62,26 @@
 {
   "imports": {
     "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react": "https://esm.sh/react@19.0.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
 </head>
   <body>
-    <div id="root"></div>
+    <div id="root" class="h-full flex flex-col items-center justify-center text-white">
+      <!-- Loading State -->
+      <div class="animate-pulse flex flex-col items-center gap-4">
+        <div class="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+        <div class="text-xl font-bold tracking-widest text-yellow-400" style="font-family: 'ZCOOL KuaiLe', sans-serif;">
+          正在加载宝可梦世界...
+        </div>
+      </div>
+    </div>
+    <!-- Critical for Vercel/Vite deployment -->
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
