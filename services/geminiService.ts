@@ -1,6 +1,27 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let aiClient: GoogleGenAI | null = null;
+
+const getAiClient = (): GoogleGenAI | null => {
+  if (aiClient) return aiClient;
+
+  // Lazily access process.env.API_KEY. 
+  // This prevents the "Uncaught Error" at startup if the key is missing in the environment.
+  const apiKey = process.env.API_KEY;
+
+  if (!apiKey) {
+    console.warn("Gemini API Key is missing. AI commentary will be disabled.");
+    return null;
+  }
+
+  try {
+    aiClient = new GoogleGenAI({ apiKey });
+    return aiClient;
+  } catch (error) {
+    console.error("Failed to initialize Gemini Client:", error);
+    return null;
+  }
+};
 
 export const getBattleCommentary = async (
   attackerName: string,
@@ -10,6 +31,14 @@ export const getBattleCommentary = async (
   isCritical: boolean,
   isFainted: boolean
 ): Promise<string> => {
+  const ai = getAiClient();
+
+  // Graceful fallback if AI is not available
+  if (!ai) {
+    if (isFainted) return `${defenderName} 倒下了！`;
+    return `${attackerName} 使用了 ${moveName}，造成了 ${damage} 点伤害！`;
+  }
+
   try {
     const prompt = `
       Current Battle Action:
@@ -35,11 +64,19 @@ export const getBattleCommentary = async (
     return response.text || `${attackerName} 使用了 ${moveName}！`;
   } catch (error) {
     console.error("Gemini API Error:", error);
+    // Fallback text on API error
     return `${attackerName} 击中了 ${defenderName}，造成了 ${damage} 点伤害！`;
   }
 };
 
 export const getIntroCommentary = async (playerPokemon: string, opponentPokemon: string): Promise<string> => {
+    const ai = getAiClient();
+    
+    // Graceful fallback
+    if (!ai) {
+        return "战斗开始！宿命的对决！";
+    }
+
     try {
         const prompt = `
             Two Pokemon are about to battle: ${playerPokemon} vs ${opponentPokemon}.
