@@ -1,0 +1,5 @@
+{
+  "name": "Copy of AI 宝可梦对战 (AI Pokémon Battle)",
+  "description": "基于 React 和 Google Gemini 的回合制宝可梦对战游戏。AI 负责生成激情的战斗解说和战术分析。",
+  "requestFramePermissions": []
+}
